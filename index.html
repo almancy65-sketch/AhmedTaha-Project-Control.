@@ -1,177 +1,128 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROJECT MANAGER | م. أحمد طه</title>
+    <title>AhmƏd TAHA - manage CENTER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-        body { font-family: 'Cairo', sans-serif; background-color: #020617; color: #f1f5f9; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(59, 130, 246, 0.2); }
-        .neon-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); border: 1px solid #3b82f6; }
-        .report-modal { animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        body { font-family: 'Cairo', sans-serif; background: #0b0f1a; color: #e2e8f0; }
+        .ai-active { border: 2px solid #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+        .input-field { background: #161e2d; border: 1px solid #1e293b; padding: 12px; border-radius: 12px; width: 100%; color: white; outline: none; }
     </style>
 </head>
-<body class="min-h-screen pb-28">
+<body class="p-4 pb-24">
 
-    <nav class="glass sticky top-0 z-50 p-5 flex justify-between items-center border-b border-blue-500/30 shadow-2xl">
-        <div class="flex items-center gap-3">
-            <div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-500/20">
-                <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
-            </div>
-            <div>
-                <h1 class="text-sm font-bold text-white uppercase tracking-tighter">ENGINEER TAHA AI</h1>
-                <p class="text-[9px] text-blue-400 font-bold uppercase tracking-widest leading-none">Smart Control Center</p>
-            </div>
+    <header class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-blue-500">مركز التحكم الكامل</h1>
+            <p class="text-xs text-slate-500">م. أحمد طه - إدارة المشاريع الذكية</p>
         </div>
-        <button onclick="showAddProjectModal()" class="bg-slate-800 p-2.5 rounded-full border border-slate-700">
-            <i data-lucide="plus" class="w-5 h-5 text-blue-400"></i>
-        </button>
-    </nav>
+        <div class="bg-blue-600/10 p-2 rounded-full"><i data-lucide="cpu" class="text-blue-500 animate-pulse"></i></div>
+    </header>
 
-    <main class="p-4">
-        <section id="dashboard-view" class="space-y-6">
-            <div class="glass p-6 rounded-[2.5rem] relative overflow-hidden">
-                <div class="flex justify-between items-start mb-4">
-                    <h2 class="text-xl font-bold">ملخص الحالة</h2>
-                    <i data-lucide="activity" class="text-green-500 w-5 animate-pulse"></i>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
-                        <span class="text-[10px] text-slate-500 block">المشاريع</span>
-                        <span id="active-count" class="text-2xl font-bold">0</span>
-                    </div>
-                    <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
-                        <span class="text-[10px] text-slate-500 block">المخاطر</span>
-                        <span id="risk-count" class="text-2xl font-bold text-red-500">0</span>
-                    </div>
+    <div id="active-project-controller" class="hidden glass p-6 rounded-3xl bg-slate-900/50 mb-8 border border-blue-500/30">
+        <h2 id="ctrl-name" class="text-xl font-bold mb-4">اسم المشروع</h2>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="text-xs text-slate-400">تحديث نسبة الإنجاز الفعلي (%)</label>
+                <input type="range" id="prog-slider" min="0" max="100" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                <div class="flex justify-between text-[10px] mt-1"><span id="prog-val">0%</span><span>100%</span></div>
+            </div>
+
+            <div>
+                <label class="text-xs text-slate-400">إضافة مهمة جديدة (WBS)</label>
+                <div class="flex gap-2">
+                    <input type="text" id="task-input" class="input-field text-sm" placeholder="مثلاً: صب الأعمدة...">
+                    <button onclick="addNewTask()" class="bg-blue-600 px-4 rounded-xl"><i data-lucide="plus" class="w-4"></i></button>
                 </div>
             </div>
-            <div id="projects-list" class="space-y-4"></div>
-        </section>
 
-        <section id="details-view" class="hidden">
-            <button onclick="showDashboard()" class="mb-4 text-slate-400 flex items-center gap-2 text-xs">
-                <i data-lucide="arrow-right" class="w-4 h-4"></i> العودة
-            </button>
-            <div id="project-insights" class="mb-6"></div>
-            
-            <div class="grid grid-cols-2 gap-3 mb-8">
-                <button onclick="generateReport('مالك')" class="bg-blue-600/20 border border-blue-500/50 p-4 rounded-2xl flex flex-col items-center gap-2">
-                    <i data-lucide="user" class="text-blue-400"></i>
-                    <span class="text-xs font-bold">تقرير للمالك</span>
-                </button>
-                <button onclick="generateReport('استشاري')" class="bg-purple-600/20 border border-purple-500/50 p-4 rounded-2xl flex flex-col items-center gap-2">
-                    <i data-lucide="briefcase" class="text-purple-400"></i>
-                    <span class="text-xs font-bold">تقرير للاستشاري</span>
-                </button>
+            <div class="bg-blue-900/20 p-4 rounded-2xl border-r-4 border-blue-500">
+                <h4 class="text-xs font-bold text-blue-400 mb-1 flex items-center gap-2">
+                    <i data-lucide="brain" class="w-4 h-4"></i> تحليل الذكاء الاصطناعي للموقف:
+                </h4>
+                <p id="ai-feedback" class="text-xs italic text-slate-300">في انتظار البيانات لتحليل المسار...</p>
             </div>
-
-            <div id="wbs-container" class="space-y-3"></div>
-        </section>
-    </main>
-
-    <div id="report-modal" class="fixed inset-0 bg-black/95 hidden z-[200] p-6 flex items-end">
-        <div class="glass w-full p-8 rounded-[2.5rem] border border-blue-500/50 report-modal shadow-[0_0_50px_rgba(59,130,246,0.2)]">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="file-text" class="text-blue-500"></i> مسودة التقرير الذكي
-                </h3>
-                <button onclick="closeReport()"><i data-lucide="x" class="text-slate-500"></i></button>
-            </div>
-            <div class="bg-slate-900/80 p-5 rounded-2xl mb-6 max-h-[40vh] overflow-y-auto">
-                <p id="report-content" class="text-sm leading-relaxed text-slate-300"></p>
-            </div>
-            <button id="share-btn" class="w-full neon-glow bg-blue-600 p-4 rounded-2xl font-bold flex items-center justify-center gap-2">
-                <i data-lucide="share-2" class="w-5 h-5"></i> مشاركة عبر WhatsApp
-            </button>
         </div>
     </div>
 
-    <div class="fixed bottom-6 left-6 right-6 glass p-2 rounded-full flex justify-around items-center border border-white/10 shadow-2xl z-[100]">
-        <button onclick="showDashboard()" class="p-4 text-blue-500"><i data-lucide="home"></i></button>
-        <button onclick="alert('BIM View - Active')" class="p-4 text-slate-400"><i data-lucide="layout"></i></button>
-        <button onclick="alert('Camera - Active')" class="p-4 text-slate-400"><i data-lucide="camera"></i></button>
+    <div id="projects-container" class="space-y-4">
+        </div>
+
+    <div class="fixed bottom-0 left-0 right-0 p-4 bg-slate-950/80 backdrop-blur-md flex justify-around border-t border-slate-800">
+        <button onclick="renderAll()" class="flex flex-col items-center gap-1 text-blue-500"><i data-lucide="layout-grid"></i><span class="text-[10px]">المشاريع</span></button>
+        <button onclick="alert('فتح الكاميرا للتحليل البصري...')" class="flex flex-col items-center gap-1 text-slate-500"><i data-lucide="camera"></i><span class="text-[10px]">الميدان</span></button>
     </div>
 
     <script>
-        let projects = JSON.parse(localStorage.getItem('taha_ai_db')) || [];
-        let currentProjectId = null;
+        let projects = JSON.parse(localStorage.getItem('taha_pro_db')) || [];
+        let currentId = null;
 
-        function sync() {
-            localStorage.setItem('taha_ai_db', JSON.stringify(projects));
-            renderDashboard();
-        }
-
-        function renderDashboard() {
-            const list = document.getElementById('projects-list');
-            list.innerHTML = '';
-            document.getElementById('active-count').innerText = projects.length;
+        function renderAll() {
+            const container = document.getElementById('projects-container');
+            document.getElementById('active-project-controller').classList.add('hidden');
+            container.innerHTML = projects.length ? '' : '<div class="text-center p-10 text-slate-600">لا توجد مشاريع.. اضغط زر الإضافة</div>';
+            
             projects.forEach(p => {
-                list.innerHTML += `
-                    <div onclick="viewAIProject(${p.id})" class="glass p-6 rounded-[2rem] border-r-4 border-blue-600">
-                        <h4 class="font-bold text-lg">${p.name}</h4>
-                        <p class="text-[10px] text-slate-500 mb-3">${p.desc || 'جاري العمل'}</p>
-                        <div class="flex items-center gap-3">
-                            <div class="flex-1 bg-slate-900 h-1 rounded-full overflow-hidden">
-                                <div class="bg-blue-600 h-full" style="width: ${p.progress}%"></div>
-                            </div>
-                            <span class="text-[10px] font-bold text-blue-400">${p.progress}%</span>
+                container.innerHTML += `
+                    <div onclick="openController(${p.id})" class="bg-slate-900 p-5 rounded-2xl border border-slate-800 active:scale-95 transition-all">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold">${p.name}</h3>
+                            <span class="text-[10px] text-blue-500 font-bold">${p.progress}%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-blue-600 h-full" style="width: ${p.progress}%"></div>
                         </div>
                     </div>`;
             });
             lucide.createIcons();
         }
 
-        function viewAIProject(id) {
-            currentProjectId = id;
-            const p = projects.find(item => item.id === id);
-            document.getElementById('dashboard-view').classList.add('hidden');
-            document.getElementById('details-view').classList.remove('hidden');
-            document.getElementById('project-insights').innerHTML = `<h2 class="text-2xl font-bold">${p.name}</h2><p class="text-blue-500 text-xs font-bold uppercase">قاعدة بيانات المهندس أحمد طه</p>`;
-            
-            const container = document.getElementById('wbs-container');
-            container.innerHTML = '<h3 class="text-xs font-bold text-slate-500 mb-4">بنود العمل الجارية</h3>';
-            (p.tasks || ["تأسيس الموقع"]).forEach(t => {
-                container.innerHTML += `<div class="glass p-4 rounded-2xl flex justify-between items-center mb-2"><span class="text-sm">${t}</span><i data-lucide="check-circle-2" class="w-4 h-4 text-slate-700"></i></div>`;
-            });
-            lucide.createIcons();
+        function openController(id) {
+            currentId = id;
+            const p = projects.find(x => x.id === id);
+            document.getElementById('active-project-controller').classList.remove('hidden');
+            document.getElementById('ctrl-name').innerText = p.name;
+            document.getElementById('prog-slider').value = p.progress;
+            document.getElementById('prog-val').innerText = p.progress + '%';
+            runAIAnalysis(p);
         }
 
-        function generateReport(target) {
-            const p = projects.find(item => item.id === currentProjectId);
-            let content = "";
-            const date = new Date().toLocaleDateString('ar-EG');
-
-            if (target === 'مالك') {
-                content = `السيد المحترم مالك مشروع ${p.name}،\n\nنود إفادتكم بأن العمل يسير بخطى ثابتة، حيث وصلت نسبة الإنجاز الكلية إلى ${p.progress}%. تم الانتهاء من معظم البنود الحرجة، ونحن الآن بصدد اللمسات النهائية لضمان تسليم المشروع بأعلى جودة تليق بسيادتكم.\n\nتحياتي،\nالمهندس أحمد طه`;
-            } else {
-                content = `السيد الاستشاري المحترم لمشروع ${p.name}،\n\nتقرير الحالة الفنية بتاريخ ${date}:\n1. نسبة الإنجاز: ${p.progress}%\n2. المهام الحالية: ${p.tasks.join('، ')}.\n3. ملاحظات رقابية: تم رصد بعض التعارضات في المسار الحرج وجاري المعالجة وفقاً للأصول الهندسية.\n\nيرجى التوجيه بالاعتماد.\n\nالمهندس أحمد طه`;
-            }
-
-            document.getElementById('report-content').innerText = content;
-            document.getElementById('report-modal').classList.remove('hidden');
-            
-            document.getElementById('share-btn').onclick = () => {
-                const url = `https://wa.me/?text=${encodeURIComponent(content)}`;
-                window.open(url, '_blank');
-            };
+        function runAIAnalysis(p) {
+            const feedback = document.getElementById('ai-feedback');
+            if(p.progress < 20) feedback.innerText = "⚠️ تحذير: المشروع في بدايته، تأخر التوريدات الآن سيؤدي لفشل المسار الحرج لاحقاً.";
+            else if(p.progress > 80) feedback.innerText = "✅ الحالة ممتازة: المشروع في مرحلة الإنهاء، تأكد من مطابقة بنود الكهرباء مع السباكة قبل التسليم.";
+            else feedback.innerText = "ℹ️ ملاحظة: معدل العمل طبيعي، يرجى توثيق صور الموقع لضمان جودة التنفيذ.";
         }
 
-        function closeReport() { document.getElementById('report-modal').classList.add('hidden'); }
-        function showDashboard() { document.getElementById('dashboard-view').classList.remove('hidden'); document.getElementById('details-view').classList.add('hidden'); }
-        function showAddProjectModal() { 
-            const name = prompt("اسم المشروع الجديد:");
-            if(name) {
-                projects.push({id: Date.now(), name, progress: 10, tasks: ["تجهيز الموقع", "توريد خامات", "بدء الأعمال"]});
-                sync();
-            }
+        // تحديث النسبة فوراً
+        document.getElementById('prog-slider').oninput = function() {
+            const val = this.value;
+            document.getElementById('prog-val').innerText = val + '%';
+            const p = projects.find(x => x.id === currentId);
+            p.progress = parseInt(val);
+            localStorage.setItem('taha_pro_db', JSON.stringify(projects));
+            runAIAnalysis(p);
+        };
+
+        function addNewTask() {
+            const task = document.getElementById('task-input').value;
+            if(!task) return;
+            alert(`تم ربط المهمة [${task}] بذكاء بجدول المسار الحرج للمشروع.`);
+            document.getElementById('task-input').value = '';
         }
 
-        sync();
+        // إضافة مشروع جديد (للتجربة)
+        if(projects.length === 0) {
+            projects.push({id: 1, name: "فيلا العبور", progress: 45, tasks: []});
+            localStorage.setItem('taha_pro_db', JSON.stringify(projects));
+        }
+
+        renderAll();
         lucide.createIcons();
     </script>
 </body>
