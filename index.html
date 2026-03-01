@@ -3,84 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام المهندس أحمد طه - الإدارة الذكية</title>
+    <title>نظام الإدارة الهندسية المتكاملة | م. أحمد طه</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; }
-        .clash-card { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.1); }
-        .success-card { border: 2px solid #22c55e; background: rgba(34, 197, 94, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; background-color: #050a18; color: #e2e8f0; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .active-tab { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
     </style>
 </head>
-<body class="p-4">
-    <header class="mb-6 text-center border-b border-slate-700 pb-4">
-        <h1 class="text-2xl font-bold text-blue-400">منظومة المهندس أحمد طه</h1>
-        <p class="text-sm text-slate-400">إدارة فيلا العبور | بيت الوطن | الأندلس</p>
-    </header>
+<body class="min-h-screen pb-20">
 
-    <div class="grid grid-cols-2 gap-4 mb-6">
-        <div class="bg-slate-800 p-3 rounded-lg text-center">
-            <span class="text-xs block text-slate-400">إنجاز العبور</span>
-            <span class="text-xl font-bold text-red-500">75%</span>
+    <nav class="glass sticky top-0 z-50 p-4 flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+            <i data-lucide="shield-check" class="text-blue-500"></i>
+            <h1 class="font-bold text-lg">PRO-MANAGER <span class="text-blue-400 text-xs">v2.0</span></h1>
         </div>
-        <div class="bg-slate-800 p-3 rounded-lg text-center">
-            <span class="text-xs block text-slate-400">تأخر المسار</span>
-            <span class="text-xl font-bold text-yellow-500">60 يوم</span>
-        </div>
-    </div>
-
-    <div class="bg-slate-800 p-5 rounded-xl shadow-2xl mb-6">
-        <h2 class="text-lg font-semibold mb-4 border-r-4 border-blue-500 pr-2">تقرير الموقع اليومي</h2>
-        
-        <label class="block text-sm mb-1">اختر المشروع:</label>
-        <select id="project" class="w-full bg-slate-900 border border-slate-700 p-3 rounded mb-4">
-            <option>فيلا العبور - تشطيبات</option>
-            <option>بيت الوطن - خرسانات</option>
-            <option>عمارة الأندلس - مباني</option>
-        </select>
-
-        <label class="block text-sm mb-1">وقت وصول الأطقم الفنية:</label>
-        <input type="time" id="arrivalTime" value="10:10" class="w-full bg-slate-900 border border-slate-700 p-3 rounded mb-4 text-white">
-
-        <button onclick="reportClash()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-lg mb-4 flex items-center justify-center gap-2 transition-all">
-            <span>⚠️ إبلاغ عن تعارض فني (Clash)</span>
+        <button onclick="showAddProjectModal()" class="bg-blue-600 p-2 rounded-full shadow-lg shadow-blue-900/20">
+            <i data-lucide="plus"></i>
         </button>
+    </nav>
 
-        <div id="clashSection" class="hidden clash-card p-4 rounded-lg mb-4 animate-pulse">
-            <label class="block text-sm font-bold text-red-400 mb-2">وصف التعارض المعماري/الكهربائي:</label>
-            <textarea id="clashDesc" placeholder="مثال: فتحات الجبس لا تطابق مخارج التكييف..." class="w-full bg-slate-900 border border-red-500 p-2 rounded text-sm text-white"></textarea>
-            <button class="mt-2 bg-blue-600 px-4 py-2 rounded text-xs">📸 رفع صورة المعاينة</button>
-        </div>
+    <main id="main-content" class="px-4">
+        
+        <section id="dashboard-view">
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="glass p-4 rounded-2xl">
+                    <p class="text-slate-400 text-xs">المشاريع النشطة</p>
+                    <h3 id="active-count" class="text-2xl font-bold text-white">0</h3>
+                </div>
+                <div class="glass p-4 rounded-2xl">
+                    <p class="text-slate-400 text-xs">إجمالي الإنجاز</p>
+                    <h3 class="text-2xl font-bold text-green-400">78%</h3>
+                </div>
+            </div>
+            
+            <h2 class="font-bold mb-4 flex items-center gap-2">
+                <i data-lucide="layout-dashboard" class="w-5"></i> قائمة المشاريع الحالية
+            </h2>
+            <div id="projects-list" class="space-y-4">
+                </div>
+        </section>
 
-        <button onclick="submitReport()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg">إرسال التقرير للمكتب الرئيسي</button>
+        <section id="details-view" class="hidden">
+            <button onclick="showDashboard()" class="mb-4 text-blue-400 flex items-center gap-1 text-sm">
+                <i data-lucide="arrow-right" class="w-4"></i> العودة للرئيسية
+            </button>
+            <div id="project-header" class="mb-6"></div>
+            <div id="wbs-container" class="space-y-4"></div>
+        </section>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 glass border-t border-slate-800 flex justify-around p-3 z-50">
+        <button onclick="showDashboard()" class="flex flex-col items-center gap-1">
+            <i data-lucide="home" class="w-6"></i>
+            <span class="text-[10px]">الرئيسية</span>
+        </button>
+        <button onclick="alert('تقارير BIM مفصلة قريباً')" class="flex flex-col items-center gap-1 opacity-50">
+            <i data-lucide="bar-chart-3" class="w-6"></i>
+            <span class="text-[10px]">التحليلات</span>
+        </button>
+        <button onclick="alert('فتح الكاميرا والـ Navisworks')" class="flex flex-col items-center gap-1 opacity-50">
+            <i data-lucide="camera" class="w-6"></i>
+            <span class="text-[10px]">الميدان</span>
+        </button>
     </div>
 
-    <div id="log" class="space-y-3 text-xs">
+    <div id="modal" class="fixed inset-0 bg-black/80 hidden z-[100] p-6 flex items-center">
+        <div class="glass w-full p-6 rounded-3xl">
+            <h3 class="text-xl font-bold mb-4">إضافة مشروع جديد</h3>
+            <input id="new-p-name" type="text" placeholder="اسم المشروع (مثلاً: فيلا العبور)" class="w-full bg-slate-900 p-3 rounded-xl mb-3 outline-none border border-slate-700">
+            <input id="new-p-desc" type="text" placeholder="وصف المرحلة (مثلاً: تشطيبات)" class="w-full bg-slate-900 p-3 rounded-xl mb-4 outline-none border border-slate-700">
+            <div class="flex gap-2">
+                <button onclick="saveProject()" class="flex-1 bg-blue-600 p-3 rounded-xl font-bold">حفظ المشروع</button>
+                <button onclick="closeModal()" class="flex-1 bg-slate-700 p-3 rounded-xl">إلغاء</button>
+            </div>
         </div>
+    </div>
 
     <script>
-        function reportClash() {
-            document.getElementById('clashSection').classList.toggle('hidden');
+        // Database State (In-memory for this demo)
+        let projects = [
+            { id: 1, name: "فيلا العبور", desc: "مرحلة التشطيبات النهائية", progress: 75, status: "Critical", tasks: ["معالجة الجبس", "سحب الأسلاك", "تركيب الرخام"] },
+            { id: 2, name: "عمارة بيت الوطن", desc: "أعمال الخرسانات المسلحة", progress: 20, status: "OnTrack", tasks: ["نجارة السقف", "حدادة السقف", "الصب"] },
+            { id: 3, name: "عمارة الأندلس", desc: "أعمال المباني والعظم", progress: 45, status: "Warning", tasks: ["ترحيل مخلفات", "بناء قواطيع", "تأسيس سباكة"] }
+        ];
+
+        function renderProjects() {
+            const list = document.getElementById('projects-list');
+            const count = document.getElementById('active-count');
+            list.innerHTML = '';
+            count.innerText = projects.length;
+
+            projects.forEach(p => {
+                const statusColor = p.status === 'Critical' ? 'text-red-500' : p.status === 'Warning' ? 'text-yellow-500' : 'text-green-500';
+                list.innerHTML += `
+                    <div onclick="viewProject(${p.id})" class="glass p-5 rounded-2xl relative overflow-hidden group active:scale-95 transition-transform">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-bold text-lg">${p.name}</h4>
+                                <p class="text-slate-400 text-xs">${p.desc}</p>
+                            </div>
+                            <span class="${statusColor} text-[10px] font-bold px-2 py-1 rounded bg-slate-900">${p.status}</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                            <div class="bg-blue-500 h-full" style="width: ${p.progress}%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-[10px] text-slate-500">
+                            <span>الإنجاز: ${p.progress}%</span>
+                            <button onclick="deleteProject(event, ${p.id})" class="text-red-800">حذف المشروع</button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
         }
 
-        function submitReport() {
-            const time = document.getElementById('arrivalTime').value;
-            const project = document.getElementById('project').value;
-            const log = document.getElementById('log');
+        function viewProject(id) {
+            const p = projects.find(item => item.id === id);
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('details-view').classList.remove('hidden');
             
-            // حساب الهدر التشغيلي
-            let waste = "0%";
-            if(time > "07:00") waste = "نسبة الهدر المادي: 15%";
-
-            const entry = document.createElement('div');
-            entry.className = "bg-slate-700 p-3 rounded-lg border-r-4 border-green-500";
-            entry.innerHTML = `
-                <strong>${project}</strong><br>
-                وصول: ${time} | <span class="text-red-400">${waste}</span><br>
-                <small class="text-slate-400">تم التوثيق في: ${new Date().toLocaleTimeString()}</small>
+            document.getElementById('project-header').innerHTML = `
+                <h2 class="text-2xl font-bold">${p.name}</h2>
+                <p class="text-slate-400">${p.desc}</p>
             `;
-            log.prepend(entry);
-            alert("تم إرسال التقرير بنجاح للسيد أحمد طه");
+
+            const container = document.getElementById('wbs-container');
+            container.innerHTML = '<h4 class="font-bold text-sm text-blue-400 mt-4">وحدات الـ WBS والمهام:</h4>';
+            p.tasks.forEach(t => {
+                container.innerHTML += `
+                    <div class="glass p-4 rounded-xl flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="check-circle" class="text-slate-500 w-5"></i>
+                            <span class="text-sm">${t}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="reportClash('${t}')" class="bg-red-900/30 text-red-500 p-2 rounded-lg text-xs font-bold">⚠️ تعارض</button>
+                            <button class="bg-green-900/30 text-green-500 p-2 rounded-lg text-xs font-bold">📸 صورة</button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
         }
+
+        function showDashboard() {
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            document.getElementById('details-view').classList.add('hidden');
+        }
+
+        function showAddProjectModal() { document.getElementById('modal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+
+        function saveProject() {
+            const name = document.getElementById('new-p-name').value;
+            const desc = document.getElementById('new-p-desc').value;
+            if(name) {
+                projects.push({ id: Date.now(), name, desc, progress: 0, status: "OnTrack", tasks: ["تأسيس الموقع"] });
+                renderProjects();
+                closeModal();
+            }
+        }
+
+        function deleteProject(e, id) {
+            e.stopPropagation();
+            if(confirm('هل تريد إزالة هذا المشروع نهائياً؟')) {
+                projects = projects.filter(p => p.id !== id);
+                renderProjects();
+            }
+        }
+
+        function reportClash(task) {
+            const note = prompt(`صف التعارض الفني في بند: ${task}`);
+            if(note) alert(`تم رصد تعارض في ${task}: ${note} \n جاري إبلاغ المكتب الفني...`);
+        }
+
+        // Initialize
+        renderProjects();
+        lucide.createIcons();
     </script>
 </body>
 </html>
