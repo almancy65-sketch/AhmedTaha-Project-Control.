@@ -298,3 +298,200 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAHA BIM OS | نظام التنسيق السيادي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@400;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; background: #010409; color: #e6edf3; overflow-x: hidden; }
+        .bim-container { background-image: radial-gradient(#1f2937 1px, transparent 1px); background-size: 20px 20px; border: 1px solid #30363d; position: relative; }
+        .layer-active { filter: drop-shadow(0 0 8px #3b82f6); opacity: 1 !important; }
+        .clash-point { cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .clash-point:hover { transform: scale(1.5); }
+        .glass-panel { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(12px); border: 1px solid #30363d; }
+        .bim-header { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        .scanner-line { position: absolute; width: 100%; height: 2px; background: rgba(59, 130, 246, 0.5); box-shadow: 0 0 15px #3b82f6; animation: scan 3s linear infinite; pointer-events: none; }
+    </style>
+</head>
+<body class="min-h-screen pb-32">
+
+    <nav class="glass-panel sticky top-0 z-[100] p-4 flex justify-between items-center border-b border-blue-500/30">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/40">
+                <i data-lucide="box" class="text-white"></i>
+            </div>
+            <div>
+                <h1 class="bim-header text-sm font-black text-blue-400">TAHA BIM 4D</h1>
+                <p class="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Advanced Spatial Coordination</p>
+            </div>
+        </div>
+        <div id="active-project-tag" class="text-[10px] bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-blue-400 font-bold">المشروع: لم يتم الاختيار</div>
+    </nav>
+
+    <main class="p-4 space-y-6">
+        
+        <section id="bim-view" class="space-y-4">
+            <div class="flex justify-between items-end px-2">
+                <h2 class="text-xl font-black">المخطط التحليلي الموحد</h2>
+                <div class="flex gap-2">
+                    <button onclick="toggleBIMLayer('struct')" id="btn-struct" class="text-[9px] px-3 py-1 rounded-md bg-blue-600 text-white font-bold">STRUCT</button>
+                    <button onclick="toggleBIMLayer('mep')" id="btn-mep" class="text-[9px] px-3 py-1 rounded-md bg-slate-800 text-slate-400 font-bold">MEP</button>
+                    <button onclick="toggleBIMLayer('arch')" id="btn-arch" class="text-[9px] px-3 py-1 rounded-md bg-slate-800 text-slate-400 font-bold">ARCH</button>
+                </div>
+            </div>
+
+            <div class="bim-container w-full aspect-square rounded-[2rem] overflow-hidden flex items-center justify-center relative">
+                <div class="scanner-line"></div>
+                
+                <svg id="bim-svg" viewBox="0 0 400 400" class="w-full h-full p-10">
+                    <g stroke="#30363d" stroke-width="0.5">
+                        <line x1="0" y1="100" x2="400" y2="100" />
+                        <line x1="0" y1="200" x2="400" y2="200" />
+                        <line x1="100" y1="0" x2="100" y2="400" />
+                        <line x1="200" y1="0" x2="200" y2="400" />
+                    </g>
+
+                    <g id="layer-struct" class="layer-active transition-all duration-500">
+                        <rect x="100" y="100" width="200" height="200" fill="none" stroke="#3b82f6" stroke-width="4" stroke-dasharray="8 4" />
+                        <circle cx="100" cy="100" r="5" fill="#3b82f6" />
+                        <circle cx="300" cy="100" r="5" fill="#3b82f6" />
+                        <circle cx="100" cy="300" r="5" fill="#3b82f6" />
+                        <circle cx="300" cy="300" r="5" fill="#3b82f6" />
+                    </g>
+
+                    <g id="layer-mep" class="opacity-0 transition-all duration-500">
+                        <path d="M 120 120 L 280 120 L 280 280" fill="none" stroke="#10b981" stroke-width="3" />
+                        <path d="M 120 150 L 120 280 L 250 280" fill="none" stroke="#f59e0b" stroke-width="2" />
+                    </g>
+
+                    <g id="layer-arch" class="opacity-0 transition-all duration-500">
+                        <rect x="110" y="110" width="180" height="180" fill="rgba(255,255,255,0.05)" stroke="#94a3b8" stroke-width="1" />
+                        <line x1="200" y1="110" x2="200" y2="150" stroke="#94a3b8" />
+                    </g>
+
+                    <g id="clash-matrix"></g>
+                </svg>
+
+                <div class="absolute bottom-6 left-6 right-6 glass-panel p-4 rounded-2xl">
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-slate-400">الإحداثيات النشطة: <b class="text-blue-400" id="coord-txt">X:240, Y:110</b></span>
+                        <span class="text-red-500 font-bold" id="clash-status">بانتظار التحليل...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-4">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest px-2">سجل التعارضات الفنية (Clash Log)</h3>
+            <div id="clash-list" class="space-y-3">
+                </div>
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-6 left-6 right-6 glass-panel p-2 rounded-full flex justify-around items-center z-[150] shadow-2xl">
+        <button onclick="location.reload()" class="p-4 text-slate-500"><i data-lucide="layout-dashboard"></i></button>
+        <button class="p-4 text-blue-500"><i data-lucide="layers"></i></button>
+        <button onclick="addNewClash()" class="p-4 text-red-500"><i data-lucide="alert-circle"></i></button>
+    </nav>
+
+    <script>
+        // --- Data Management ---
+        let activeLayers = { struct: true, mep: false, arch: false };
+        let clashes = [
+            { id: 'C-101', title: 'تعارض مسار التكييف مع الكمرة G-12', severity: 'High', layer: 'mep', solved: false, x: 280, y: 120 },
+            { id: 'C-102', title: 'تداخل تمديدات السباكة مع عمود C-4', severity: 'Critical', layer: 'mep', solved: false, x: 120, y: 280 }
+        ];
+
+        function toggleBIMLayer(layer) {
+            activeLayers[layer] = !activeLayers[layer];
+            const el = document.getElementById(`layer-${layer}`);
+            const btn = document.getElementById(`btn-${layer}`);
+            
+            if(activeLayers[layer]) {
+                el.classList.add('layer-active');
+                el.classList.remove('opacity-0');
+                btn.classList.replace('bg-slate-800', 'bg-blue-600');
+                btn.classList.replace('text-slate-400', 'text-white');
+            } else {
+                el.classList.remove('layer-active');
+                el.classList.add('opacity-0');
+                btn.classList.replace('bg-blue-600', 'bg-slate-800');
+                btn.classList.replace('text-white', 'text-slate-400');
+            }
+            renderClashes();
+        }
+
+        function renderClashes() {
+            const matrix = document.getElementById('clash-matrix');
+            const list = document.getElementById('clash-list');
+            matrix.innerHTML = '';
+            list.innerHTML = '';
+
+            clashes.forEach((c, idx) => {
+                // Show clash only if its layer is active
+                if(activeLayers[c.layer] || c.layer === 'struct') {
+                    // Draw on SVG
+                    matrix.innerHTML += `
+                        <circle cx="${c.x}" cy="${c.y}" r="8" fill="${c.solved ? '#10b981' : '#ef4444'}" class="clash-point shadow-lg" onclick="showClashInfo(${idx})">
+                            <animate attributeName="r" values="6;9;6" dur="1s" repeatCount="indefinite" />
+                        </circle>
+                    `;
+                    
+                    // Add to List
+                    list.innerHTML += `
+                        <div class="glass-panel p-4 rounded-2xl flex justify-between items-center border-r-4 ${c.solved ? 'border-green-500' : 'border-red-600'}">
+                            <div>
+                                <h4 class="text-xs font-bold text-white mb-1">${c.title}</h4>
+                                <span class="text-[8px] bg-white/5 px-2 py-0.5 rounded text-slate-500 uppercase">${c.id}</span>
+                            </div>
+                            <button onclick="solveClash(${idx})" class="text-[9px] font-bold ${c.solved ? 'text-green-500' : 'text-blue-400'} uppercase">
+                                ${c.solved ? 'تم الحل ✅' : 'إغلاق البند'}
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+            
+            document.getElementById('clash-status').innerText = clashes.filter(c => !c.solved).length + " تعارضات نشطة";
+            lucide.createIcons();
+        }
+
+        function showClashInfo(idx) {
+            const c = clashes[idx];
+            alert(`[${c.id}] تفاصيل التعارض:\n${c.title}\nالمقترح الذكي: تعديل منسوب المواسير بمقدار -15 سم لتفادي العنصر الإنشائي.`);
+        }
+
+        function solveClash(idx) {
+            clashes[idx].solved = !clashes[idx].solved;
+            renderClashes();
+        }
+
+        function addNewClash() {
+            const title = prompt("أدخل وصف التعارض الميداني:");
+            if(title) {
+                clashes.push({
+                    id: 'C-' + (100 + clashes.length + 1),
+                    title: title,
+                    severity: 'Medium',
+                    layer: 'mep',
+                    solved: false,
+                    x: Math.random() * 200 + 100,
+                    y: Math.random() * 200 + 100
+                });
+                renderClashes();
+            }
+        }
+
+        // Initialize
+        renderClashes();
+        lucide.createIcons();
+    </script>
+</body>
+</html>
