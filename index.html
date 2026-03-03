@@ -3,494 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAHA SUPREME OS | م. أحمد طه</title>
+    <title>Ahmed|TAHA AT | Management ENGINEERING OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; background: #020617; color: #f1f5f9; user-select: none; }
-        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .active-tab { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
-        .editable:hover { background: rgba(59, 130, 246, 0.1); cursor: pointer; border-radius: 4px; }
-        input[type="range"] { accent-color: #3b82f6; }
-        @keyframes pulse-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .clash-alert { animation: pulse-red 1s infinite; color: #ef4444; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@300;400;700;900&display=swap');
+        :root { --neon-blue: #00f2ff; --neon-gold: #ffc400; --bg-dark: #020617; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-dark); color: #f8fafc; overflow-x: hidden; }
+        .cyber-header { font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .neo-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-right: 4px solid transparent; }
+        .neo-card:active { transform: scale(0.98); }
+        .editable-active { background: rgba(0, 242, 255, 0.1) !important; border: 1px dashed var(--neon-blue) !important; outline: none; }
+        .scanning-line { position: absolute; width: 100%; height: 2px; background: var(--neon-blue); top: 0; animation: scan 3s linear infinite; box-shadow: 0 0 15px var(--neon-blue); }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        .progress-fill { transition: width 0.8s ease-in-out; box-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
     </style>
 </head>
 <body class="min-h-screen pb-32">
 
-    <nav class="glass sticky top-0 z-[100] p-4 flex justify-between items-center border-b border-blue-500/20 shadow-2xl">
-        <div class="flex items-center gap-3">
-            <div class="p-2 bg-blue-600 rounded-xl shadow-lg shadow-blue-500/30">
-                <i data-lucide="shield-check" class="text-white w-6 h-6"></i>
+    <nav class="glass sticky top-0 z-[100] p-4 flex justify-between items-center border-b border-white/5">
+        <div class="flex items-center gap-4">
+            <div class="relative group" onclick="location.reload()">
+                <div class="absolute inset-0 bg-blue-500 blur-lg opacity-40 group-hover:opacity-100 transition-all"></div>
+                <i data-lucide="shield-alert" class="relative w-8 h-8 text-blue-400"></i>
             </div>
             <div>
-                <h1 class="text-lg font-black tracking-tighter uppercase">Taha <span class="text-blue-500">Master Control</span></h1>
-                <div class="flex items-center gap-1 text-[8px] text-green-500 font-bold uppercase tracking-widest">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span> Online System
+                <h1 class="cyber-header text-sm font-black text-white">TAHA AI ENGINE v3.0</h1>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Sovereign Control Active</span>
                 </div>
             </div>
         </div>
-        <button onclick="addNewProject()" class="p-3 bg-blue-600/10 rounded-full border border-blue-500/30 text-blue-500 hover:bg-blue-600 hover:text-white transition-all">
-            <i data-lucide="plus"></i>
-        </button>
+        <div class="flex gap-2">
+            <button onclick="createNewProject()" class="p-3 bg-blue-600/20 text-blue-400 rounded-2xl border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-all">
+                <i data-lucide="plus-square"></i>
+            </button>
+        </div>
     </nav>
 
-    <main id="app-container" class="p-4">
+    <main id="main-hub" class="p-4 space-y-6">
         
-        <section id="dashboard-view" class="space-y-6">
+        <section id="dashboard" class="space-y-6">
             <div class="grid grid-cols-2 gap-4">
-                <div class="glass p-5 rounded-3xl border-r-4 border-blue-500">
-                    <p class="text-[10px] text-slate-500 font-bold">إجمالي المشاريع</p>
-                    <h3 id="stat-total" class="text-3xl font-black">0</h3>
+                <div class="glass p-6 rounded-[2rem] relative overflow-hidden">
+                    <p class="text-[10px] text-slate-500 font-black uppercase">إجمالي المحفظة</p>
+                    <h3 id="stat-count" class="text-3xl font-black mt-1">0</h3>
+                    <i data-lucide="database" class="absolute -bottom-2 -right-2 w-16 h-16 text-white/5"></i>
                 </div>
-                <div class="glass p-5 rounded-3xl border-r-4 border-purple-500">
-                    <p class="text-[10px] text-slate-500 font-bold">معدل الإنجاز</p>
-                    <h3 id="stat-avg" class="text-3xl font-black">0%</h3>
+                <div class="glass p-6 rounded-[2rem] relative overflow-hidden border-r-4 border-blue-500">
+                    <p class="text-[10px] text-slate-500 font-black uppercase">كفاءة التنفيذ</p>
+                    <h3 id="stat-eff" class="text-3xl font-black mt-1 text-blue-400">0%</h3>
                 </div>
             </div>
             <div id="projects-list" class="space-y-4"></div>
         </section>
 
-        <section id="control-view" class="hidden space-y-6 animate-in slide-in-from-left duration-300">
-            <button onclick="showView('dashboard-view')" class="flex items-center gap-2 text-xs text-slate-500 bg-slate-800/50 px-4 py-2 rounded-full">
-                <i data-lucide="chevron-right" class="w-4 h-4"></i> العودة للمصفوفة
+        <section id="control-view" class="hidden space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-500">
+            <button onclick="backToDash()" class="text-xs font-bold text-slate-500 flex items-center gap-2 bg-slate-900 px-4 py-2 rounded-full">
+                <i data-lucide="arrow-right" class="w-4 h-4"></i> الرجوع للمصفوفة
             </button>
             
-            <div class="glass p-6 rounded-[2.5rem]">
-                <h2 id="view-p-name" class="text-3xl font-black editable" onclick="editContent(this, 'name')">اسم المشروع</h2>
-                <p id="view-p-loc" class="text-blue-500 text-xs font-bold mt-1 editable" onclick="editContent(this, 'location')">الموقع: اضغط للتعديل</p>
-            </div>
-
-            <div class="glass p-4 rounded-2xl border-l-4 border-yellow-500 flex gap-3">
-                <i data-lucide="brain-circuit" class="text-yellow-500"></i>
-                <div>
-                    <h4 class="text-[10px] font-bold text-yellow-500 uppercase">توصية الذكاء الاصطناعي</h4>
-                    <p id="ai-text" class="text-xs text-slate-400 italic mt-1">جاري تحليل المخاطر بناءً على البيانات المدخلة...</p>
+            <div class="glass p-8 rounded-[2.5rem] border-b-4 border-blue-600">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 id="p-name" class="text-3xl font-black focus:editable-active" contenteditable="true" onblur="updateProjectInfo('name', this.innerText)">اسم المشروع</h2>
+                        <p id="p-loc" class="text-blue-500 text-xs font-bold mt-2 focus:editable-active uppercase" contenteditable="true" onblur="updateProjectInfo('location', this.innerText)">الموقع الجغرافي</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-slate-500 block">الميزانية المرصودة</span>
+                        <h4 id="p-budget" class="text-lg font-black text-green-500" contenteditable="true" onblur="updateProjectInfo('budget', this.innerText)">0</h4>
+                    </div>
                 </div>
             </div>
 
-            <div id="wbs-stages" class="space-y-4"></div>
-            
-            <button onclick="addStage()" class="w-full p-4 border-2 border-dashed border-slate-800 rounded-2xl text-slate-500 text-xs font-bold flex items-center justify-center gap-2">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة مرحلة عمل جديدة (WBS)
+            <div id="ai-panel" class="glass p-6 rounded-3xl border-l-4 border-yellow-500 flex gap-4 items-center">
+                <div class="bg-yellow-500/10 p-3 rounded-2xl">
+                    <i data-lucide="brain" class="text-yellow-500 w-8 h-8"></i>
+                </div>
+                <div>
+                    <h5 class="text-[10px] font-black text-yellow-500 uppercase">عقل طه الاصطناعي (Logic Core)</h5>
+                    <p id="ai-msg" class="text-xs text-slate-300 italic mt-1 leading-relaxed">جاري تحليل البيانات المدخلة...</p>
+                </div>
+            </div>
+
+            <div id="wbs-container" class="space-y-4"></div>
+
+            <button onclick="addWbsStage()" class="w-full p-5 border-2 border-dashed border-slate-800 rounded-[2rem] text-slate-500 text-xs font-black flex items-center justify-center gap-2 hover:border-blue-500 hover:text-blue-400 transition-all">
+                <i data-lucide="layers"></i> إضافة مرحلة عمل هندسية (WBS Stage)
             </button>
         </section>
 
         <section id="bim-view" class="hidden space-y-6">
-            <h2 class="text-2xl font-black mb-6">BIM Clash Detection</h2>
-            <div class="glass p-6 rounded-[2.5rem] aspect-square flex items-center justify-center relative overflow-hidden border-2 border-blue-500/20">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-                <div class="relative w-full h-full border border-blue-500/30 rounded-lg flex items-center justify-center">
-                    <i data-lucide="box" class="w-32 h-32 text-blue-500/20"></i>
-                    <div class="absolute top-1/4 left-1/3 clash-alert flex flex-col items-center">
-                        <i data-lucide="alert-triangle"></i>
-                        <span class="text-[8px] font-bold">CLASH-01: MEP/STRUCT</span>
-                    </div>
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-black">نظام التوأم الرقمي</h2>
+                <span class="bg-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">3D Analysis</span>
+            </div>
+            <div class="glass aspect-video rounded-[2.5rem] relative overflow-hidden flex items-center justify-center border-2 border-blue-500/20">
+                <div class="scanning-line"></div>
+                <div id="bim-canvas" class="w-full h-full flex flex-col items-center justify-center gap-4">
+                    <i data-lucide="box" class="w-24 h-24 text-blue-500/10 animate-pulse"></i>
+                    <p class="text-[10px] font-bold text-blue-400/50 uppercase tracking-[0.5em]">Scanning Structural Layout</p>
+                </div>
+                <div class="absolute top-10 left-10 bg-red-600/20 p-2 border border-red-500 rounded text-[8px] font-bold text-red-500 flex items-center gap-1">
+                    <i data-lucide="zap" class="w-3"></i> CLASH_04: HVAC vs COLUMN
                 </div>
             </div>
-            <div id="clash-list" class="space-y-2">
-                <div class="glass p-4 rounded-xl text-xs flex justify-between">
-                    <span>تعارض المواسير مع الكمرة الرابطة</span>
-                    <span class="text-red-500 font-bold tracking-tighter uppercase">High Priority</span>
-                </div>
-            </div>
+            <div id="clash-logs" class="space-y-2"></div>
         </section>
 
-        <section id="field-view" class="hidden fixed inset-0 z-[200] bg-black">
-            <video id="site-cam" autoplay playsinline class="w-full h-full object-cover"></video>
-            <div class="absolute inset-0 border-[20px] border-black/20 pointer-events-none flex items-center justify-center">
-                <div class="w-64 h-64 border border-white/20 rounded-full"></div>
+        <section id="camera-view" class="hidden fixed inset-0 z-[1000] bg-black">
+            <video id="site-video" autoplay playsinline class="w-full h-full object-cover"></video>
+            <canvas id="photo-canvas" class="hidden"></canvas>
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
+            <div class="absolute top-10 left-1/2 -translate-x-1/2 glass px-6 py-2 rounded-full border border-blue-500/50 flex items-center gap-3">
+                <div class="w-2 h-2 bg-red-600 rounded-full animate-ping"></div>
+                <span class="text-[10px] font-black uppercase tracking-widest">Live AR Overlay Mode</span>
             </div>
-            <div class="absolute bottom-10 left-0 right-0 flex justify-center gap-6 p-6">
-                <button onclick="takeSitePhoto()" class="w-20 h-20 bg-white rounded-full border-8 border-slate-900 shadow-2xl"></button>
-                <button onclick="closeCamera()" class="absolute right-10 bottom-14 bg-red-600 p-4 rounded-full"><i data-lucide="x"></i></button>
+            <div class="absolute bottom-10 left-0 right-0 flex justify-center items-center gap-8 px-10">
+                <button onclick="closeCamera()" class="p-5 bg-slate-900 rounded-full text-white"><i data-lucide="arrow-right"></i></button>
+                <div onclick="captureFrame()" class="w-24 h-24 bg-white rounded-full border-[10px] border-white/20 shadow-2xl active:scale-90 transition-all"></div>
+                <button onclick="alert('BIM Overlay Enabled')" class="p-5 bg-blue-600 rounded-full text-white"><i data-lucide="layers"></i></button>
             </div>
         </section>
 
     </main>
 
-    <nav class="fixed bottom-6 left-6 right-6 glass p-2 rounded-full flex justify-around items-center z-[150] shadow-2xl border-white/5">
-        <button onclick="showView('dashboard-view')" class="nav-icon p-4 text-blue-500"><i data-lucide="layout-dashboard"></i></button>
-        <button onclick="showView('bim-view')" class="nav-icon p-4 text-slate-500"><i data-lucide="layers"></i></button>
-        <button onclick="openCamera()" class="nav-icon p-4 text-slate-500"><i data-lucide="camera"></i></button>
-        <button onclick="showReportOptions()" class="nav-icon p-4 text-slate-500"><i data-lucide="file-text"></i></button>
+    <nav class="fixed bottom-6 left-6 right-6 glass p-2 rounded-full flex justify-around items-center z-[500] shadow-2xl border-white/10">
+        <button onclick="showHub('dashboard')" class="nav-btn p-4 text-blue-500"><i data-lucide="layout-grid"></i></button>
+        <button onclick="showHub('bim-view')" class="nav-btn p-4 text-slate-500"><i data-lucide="cpu"></i></button>
+        <button onclick="openCamera()" class="nav-btn p-4 text-slate-500"><i data-lucide="maximize"></i></button>
+        <button onclick="generateReport()" class="nav-btn p-4 text-slate-500"><i data-lucide="send"></i></button>
     </nav>
 
     <script>
-        // --- Core Engine & Database ---
-        let projects = JSON.parse(localStorage.getItem('taha_master_db')) || [];
+        // --- DATA ARCHITECTURE ---
+        let projects = JSON.parse(localStorage.getItem('taha_supreme_db')) || [];
         let activePId = null;
-        let stream = null;
+        let camStream = null;
 
-        function save() {
-            localStorage.setItem('taha_master_db', JSON.stringify(projects));
+        function sync() {
+            localStorage.setItem('taha_supreme_db', JSON.stringify(projects));
             renderDashboard();
-            if(activePId) updateAIInsight();
+            if (activePId) renderProjectDetail();
         }
 
-        function showView(id) {
-            ['dashboard-view', 'control-view', 'bim-view', 'field-view'].forEach(v => {
-                document.getElementById(v).classList.add('hidden');
+        // --- NAVIGATION ---
+        function showHub(viewId) {
+            ['dashboard', 'control-view', 'bim-view'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
             });
-            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
             
-            // Update icons colors
-            document.querySelectorAll('.nav-icon').forEach(btn => btn.classList.replace('text-blue-500', 'text-slate-500'));
-            // This is a simplified logic for icon highlighting
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-blue-500', 'text-slate-500'));
+            // Highlight logic
         }
 
-        // --- Project Management ---
-        function addNewProject() {
-            const name = prompt("أدخل اسم المشروع الجديد:");
-            if(!name) return;
+        function backToDash() { showHub('dashboard'); activePId = null; }
+
+        // --- PROJECT LOGIC ---
+        function createNewProject() {
+            const name = prompt("اسم المشروع الجديد (سيتم إنشاء هيكل WBS ذكي تلقائياً):");
+            if (!name) return;
             const newP = {
                 id: Date.now(),
                 name: name,
-                location: "موقع غير محدد",
+                location: "غير محدد",
+                budget: "0 EGP",
                 stages: [
-                    { name: "أعمال الخرسانات", progress: 0, tasks: ["حفر", "نجارة", "صب"] }
+                    { name: "المرحلة الإنشائية (الهيكل)", progress: 0, tasks: ["تجهيز الموقع", "حفر"، "نجارة وحدادة القواعد"] },
+                    { name: "مرحلة المباني والعزل", progress: 0, tasks: ["بناء الطوب", "عزل الرطوبة"] },
+                    { name: "مرحلة التشطيبات (Architecture)", progress: 0, tasks: ["تأسيس سباكة", "تأسيس كهرباء", "لياسة"] }
                 ]
             };
             projects.push(newP);
-            save();
+            sync();
         }
 
         function renderDashboard() {
             const list = document.getElementById('projects-list');
             list.innerHTML = '';
-            let totalProg = 0;
+            let totalEff = 0;
 
             projects.forEach(p => {
-                const avg = p.stages.length ? Math.round(p.stages.reduce((a,b) => a + b.progress, 0) / p.stages.length) : 0;
-                totalProg += avg;
+                const pProgress = p.stages.length ? Math.round(p.stages.reduce((a, b) => a + b.progress, 0) / p.stages.length) : 0;
+                totalEff += pProgress;
                 list.innerHTML += `
-                    <div onclick="openProject(${p.id})" class="glass p-6 rounded-[2rem] active:scale-95 transition-all border-l-4 border-blue-600">
+                    <div onclick="openProject(${p.id})" class="glass p-6 rounded-[2rem] neo-card border-r-4 border-blue-600 active:bg-blue-600/10">
                         <div class="flex justify-between items-start mb-4">
-                            <h4 class="text-xl font-bold">${p.name}</h4>
-                            <button onclick="deleteProject(event, ${p.id})" class="text-red-900"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <div>
+                                <h4 class="text-xl font-black">${p.name}</h4>
+                                <p class="text-[9px] text-blue-500 font-bold uppercase tracking-widest mt-1">${p.location}</p>
+                            </div>
+                            <button onclick="deleteProject(event, ${p.id})" class="text-red-900/50 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                         <div class="flex items-center gap-4">
-                            <div class="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div class="bg-blue-600 h-full shadow-[0_0_10px_#3b82f6]" style="width: ${avg}%"></div>
+                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div class="progress-fill bg-blue-500 h-full" style="width: ${pProgress}%"></div>
                             </div>
-                            <span class="text-xs font-black">${avg}%</span>
+                            <span class="text-xs font-black text-blue-400">${pProgress}%</span>
                         </div>
                     </div>`;
             });
 
-            document.getElementById('stat-total').innerText = projects.length;
-            document.getElementById('stat-avg').innerText = projects.length ? Math.round(totalProg/projects.length) + "%" : "0%";
+            document.getElementById('stat-count').innerText = projects.length;
+            document.getElementById('stat-eff').innerText = projects.length ? Math.round(totalEff / projects.length) + "%" : "0%";
             lucide.createIcons();
         }
 
         function openProject(id) {
             activePId = id;
-            const p = projects.find(x => x.id === id);
-            showView('control-view');
-            document.getElementById('view-p-name').innerText = p.name;
-            document.getElementById('view-p-loc').innerText = "الموقع: " + p.location;
-            renderStages(p);
-            updateAIInsight();
+            showHub('control-view');
+            renderProjectDetail();
         }
 
-        function editContent(el, field) {
-            const newVal = prompt("تعديل البيانات:", el.innerText.replace("الموقع: ", ""));
-            if(newVal !== null) {
-                const p = projects.find(x => x.id === activePId);
-                p[field] = newVal;
-                el.innerText = field === 'location' ? "الموقع: " + newVal : newVal;
-                save();
-            }
-        }
+        function renderProjectDetail() {
+            const p = projects.find(x => x.id === activePId);
+            document.getElementById('p-name').innerText = p.name;
+            document.getElementById('p-loc').innerText = p.location;
+            document.getElementById('p-budget').innerText = p.budget;
 
-        function renderStages(p) {
-            const container = document.getElementById('wbs-stages');
+            const container = document.getElementById('wbs-container');
             container.innerHTML = '';
-            p.stages.forEach((s, idx) => {
+            p.stages.forEach((s, sIdx) => {
                 container.innerHTML += `
-                    <div class="glass p-5 rounded-3xl">
-                        <div class="flex justify-between mb-4">
-                            <span class="text-sm font-bold editable" onclick="editStageName(${idx})">${s.name}</span>
+                    <div class="glass p-6 rounded-[2rem]">
+                        <div class="flex justify-between items-center mb-4">
+                            <h5 class="text-xs font-black uppercase text-slate-400 focus:editable-active" contenteditable="true" onblur="updateStageName(${sIdx}, this.innerText)">${s.name}</h5>
                             <span class="text-blue-500 font-black">${s.progress}%</span>
                         </div>
-                        <input type="range" value="${s.progress}" oninput="updateProg(${idx}, this.value)" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer mb-4">
-                        <div class="flex flex-wrap gap-2" id="tasks-${idx}">
-                            ${s.tasks.map(t => `<span class="text-[9px] bg-slate-900 px-3 py-1.5 rounded-full border border-slate-800 text-slate-400">${t}</span>`).join('')}
-                            <button onclick="addTask(${idx})" class="text-[9px] bg-blue-600/10 text-blue-500 px-3 py-1.5 rounded-full border border-blue-500/20 font-bold">+ إضافة بند</button>
+                        <input type="range" value="${s.progress}" oninput="updateStageProg(${sIdx}, this.value)" class="w-full h-1 bg-slate-800 appearance-none rounded-lg cursor-pointer accent-blue-500 mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            ${s.tasks.map((t, tIdx) => `<span class="text-[10px] bg-slate-900 border border-white/5 px-3 py-1 rounded-lg text-slate-400" contenteditable="true" onblur="updateTaskName(${sIdx}, ${tIdx}, this.innerText)">${t}</span>`).join('')}
+                            <button onclick="addTaskToStage(${sIdx})" class="text-[10px] bg-blue-600/10 text-blue-500 border border-blue-500/20 px-3 py-1 rounded-lg font-bold">+ بند جديد</button>
                         </div>
                     </div>`;
             });
-        }
-
-        function updateProg(idx, val) {
-            const p = projects.find(x => x.id === activePId);
-            p.stages[idx].progress = parseInt(val);
-            event.target.previousElementSibling.querySelector('.text-blue-500').innerText = val + '%';
-            save();
-        }
-
-        function addTask(sIdx) {
-            const task = prompt("اسم البند الجديد (مثلاً: أعمال العزل):");
-            if(task) {
-                projects.find(x => x.id === activePId).stages[sIdx].tasks.push(task);
-                save();
-                openProject(activePId);
-            }
-        }
-
-        function addStage() {
-            const name = prompt("اسم مرحلة العمل (WBS):");
-            if(name) {
-                projects.find(x => x.id === activePId).stages.push({ name: name, progress: 0, tasks: [] });
-                save();
-                openProject(activePId);
-            }
-        }
-
-        function updateAIInsight() {
-            const p = projects.find(x => x.id === activePId);
-            const aiText = document.getElementById('ai-text');
-            const total = Math.round(p.stages.reduce((a,b) => a + b.progress, 0) / p.stages.length);
-            
-            if(total < 30) aiText.innerText = "تحليل: المشروع في مرحلة حرجة من التأسيس. ننصح بمراجعة جودة الخامات الموردة فوراً لضمان عدم تأخر المسار الحرج.";
-            else if(total < 70) aiText.innerText = "تحليل: العمل يسير بمعدل جيد. يرجى البدء في التنسيق بين مقاولي الباطن لتجنب التعارضات في مرحلة التشطيب.";
-            else aiText.innerText = "تحليل: اقتراب التسليم. جاري إعداد قائمة الملاحظات النهائية (Snag List). العمل ممتاز يا بشمهندس أحمد.";
-        }
-
-        // --- Media Engine ---
-        async function openCamera() {
-            showView('field-view');
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                document.getElementById('site-cam').srcObject = stream;
-            } catch (err) { alert("الكاميرا تتطلب إذن الوصول من المتصفح."); showView('dashboard-view'); }
-        }
-
-        function closeCamera() {
-            if(stream) stream.getTracks().forEach(t => t.stop());
-            showView('dashboard-view');
-        }
-
-        function takeSitePhoto() {
-            alert("تم التقاط الصورة وربطها بتقرير اليوم الحالي بنجاح.");
-            closeCamera();
-        }
-
-        function deleteProject(e, id) {
-            e.stopPropagation();
-            if(confirm('سيتم مسح بيانات المشروع نهائياً، هل أنت متأكد؟')) {
-                projects = projects.filter(p => p.id !== id);
-                save();
-            }
-        }
-
-        function showReportOptions() {
-            if(!activePId) { alert("يرجى اختيار مشروع أولاً لتوليد التقرير."); return; }
-            const p = projects.find(x => x.id === activePId);
-            const msg = `تقرير إنجاز مشروع: ${p.name}\nالحالة: ${Math.round(p.stages.reduce((a,b) => a + b.progress, 0) / p.stages.length)}%\n\nتحياتي، م. أحمد طه`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        // Initialization
-        renderDashboard();
-        lucide.createIcons();
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAHA BIM OS | نظام التنسيق السيادي</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@400;700;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; background: #010409; color: #e6edf3; overflow-x: hidden; }
-        .bim-container { background-image: radial-gradient(#1f2937 1px, transparent 1px); background-size: 20px 20px; border: 1px solid #30363d; position: relative; }
-        .layer-active { filter: drop-shadow(0 0 8px #3b82f6); opacity: 1 !important; }
-        .clash-point { cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .clash-point:hover { transform: scale(1.5); }
-        .glass-panel { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(12px); border: 1px solid #30363d; }
-        .bim-header { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
-        .scanner-line { position: absolute; width: 100%; height: 2px; background: rgba(59, 130, 246, 0.5); box-shadow: 0 0 15px #3b82f6; animation: scan 3s linear infinite; pointer-events: none; }
-    </style>
-</head>
-<body class="min-h-screen pb-32">
-
-    <nav class="glass-panel sticky top-0 z-[100] p-4 flex justify-between items-center border-b border-blue-500/30">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/40">
-                <i data-lucide="box" class="text-white"></i>
-            </div>
-            <div>
-                <h1 class="bim-header text-sm font-black text-blue-400">TAHA BIM 4D</h1>
-                <p class="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Advanced Spatial Coordination</p>
-            </div>
-        </div>
-        <div id="active-project-tag" class="text-[10px] bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-blue-400 font-bold">المشروع: لم يتم الاختيار</div>
-    </nav>
-
-    <main class="p-4 space-y-6">
-        
-        <section id="bim-view" class="space-y-4">
-            <div class="flex justify-between items-end px-2">
-                <h2 class="text-xl font-black">المخطط التحليلي الموحد</h2>
-                <div class="flex gap-2">
-                    <button onclick="toggleBIMLayer('struct')" id="btn-struct" class="text-[9px] px-3 py-1 rounded-md bg-blue-600 text-white font-bold">STRUCT</button>
-                    <button onclick="toggleBIMLayer('mep')" id="btn-mep" class="text-[9px] px-3 py-1 rounded-md bg-slate-800 text-slate-400 font-bold">MEP</button>
-                    <button onclick="toggleBIMLayer('arch')" id="btn-arch" class="text-[9px] px-3 py-1 rounded-md bg-slate-800 text-slate-400 font-bold">ARCH</button>
-                </div>
-            </div>
-
-            <div class="bim-container w-full aspect-square rounded-[2rem] overflow-hidden flex items-center justify-center relative">
-                <div class="scanner-line"></div>
-                
-                <svg id="bim-svg" viewBox="0 0 400 400" class="w-full h-full p-10">
-                    <g stroke="#30363d" stroke-width="0.5">
-                        <line x1="0" y1="100" x2="400" y2="100" />
-                        <line x1="0" y1="200" x2="400" y2="200" />
-                        <line x1="100" y1="0" x2="100" y2="400" />
-                        <line x1="200" y1="0" x2="200" y2="400" />
-                    </g>
-
-                    <g id="layer-struct" class="layer-active transition-all duration-500">
-                        <rect x="100" y="100" width="200" height="200" fill="none" stroke="#3b82f6" stroke-width="4" stroke-dasharray="8 4" />
-                        <circle cx="100" cy="100" r="5" fill="#3b82f6" />
-                        <circle cx="300" cy="100" r="5" fill="#3b82f6" />
-                        <circle cx="100" cy="300" r="5" fill="#3b82f6" />
-                        <circle cx="300" cy="300" r="5" fill="#3b82f6" />
-                    </g>
-
-                    <g id="layer-mep" class="opacity-0 transition-all duration-500">
-                        <path d="M 120 120 L 280 120 L 280 280" fill="none" stroke="#10b981" stroke-width="3" />
-                        <path d="M 120 150 L 120 280 L 250 280" fill="none" stroke="#f59e0b" stroke-width="2" />
-                    </g>
-
-                    <g id="layer-arch" class="opacity-0 transition-all duration-500">
-                        <rect x="110" y="110" width="180" height="180" fill="rgba(255,255,255,0.05)" stroke="#94a3b8" stroke-width="1" />
-                        <line x1="200" y1="110" x2="200" y2="150" stroke="#94a3b8" />
-                    </g>
-
-                    <g id="clash-matrix"></g>
-                </svg>
-
-                <div class="absolute bottom-6 left-6 right-6 glass-panel p-4 rounded-2xl">
-                    <div class="flex justify-between items-center text-[10px]">
-                        <span class="text-slate-400">الإحداثيات النشطة: <b class="text-blue-400" id="coord-txt">X:240, Y:110</b></span>
-                        <span class="text-red-500 font-bold" id="clash-status">بانتظار التحليل...</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="space-y-4">
-            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest px-2">سجل التعارضات الفنية (Clash Log)</h3>
-            <div id="clash-list" class="space-y-3">
-                </div>
-        </section>
-
-    </main>
-
-    <nav class="fixed bottom-6 left-6 right-6 glass-panel p-2 rounded-full flex justify-around items-center z-[150] shadow-2xl">
-        <button onclick="location.reload()" class="p-4 text-slate-500"><i data-lucide="layout-dashboard"></i></button>
-        <button class="p-4 text-blue-500"><i data-lucide="layers"></i></button>
-        <button onclick="addNewClash()" class="p-4 text-red-500"><i data-lucide="alert-circle"></i></button>
-    </nav>
-
-    <script>
-        // --- Data Management ---
-        let activeLayers = { struct: true, mep: false, arch: false };
-        let clashes = [
-            { id: 'C-101', title: 'تعارض مسار التكييف مع الكمرة G-12', severity: 'High', layer: 'mep', solved: false, x: 280, y: 120 },
-            { id: 'C-102', title: 'تداخل تمديدات السباكة مع عمود C-4', severity: 'Critical', layer: 'mep', solved: false, x: 120, y: 280 }
-        ];
-
-        function toggleBIMLayer(layer) {
-            activeLayers[layer] = !activeLayers[layer];
-            const el = document.getElementById(`layer-${layer}`);
-            const btn = document.getElementById(`btn-${layer}`);
-            
-            if(activeLayers[layer]) {
-                el.classList.add('layer-active');
-                el.classList.remove('opacity-0');
-                btn.classList.replace('bg-slate-800', 'bg-blue-600');
-                btn.classList.replace('text-slate-400', 'text-white');
-            } else {
-                el.classList.remove('layer-active');
-                el.classList.add('opacity-0');
-                btn.classList.replace('bg-blue-600', 'bg-slate-800');
-                btn.classList.replace('text-white', 'text-slate-400');
-            }
-            renderClashes();
-        }
-
-        function renderClashes() {
-            const matrix = document.getElementById('clash-matrix');
-            const list = document.getElementById('clash-list');
-            matrix.innerHTML = '';
-            list.innerHTML = '';
-
-            clashes.forEach((c, idx) => {
-                // Show clash only if its layer is active
-                if(activeLayers[c.layer] || c.layer === 'struct') {
-                    // Draw on SVG
-                    matrix.innerHTML += `
-                        <circle cx="${c.x}" cy="${c.y}" r="8" fill="${c.solved ? '#10b981' : '#ef4444'}" class="clash-point shadow-lg" onclick="showClashInfo(${idx})">
-                            <animate attributeName="r" values="6;9;6" dur="1s" repeatCount="indefinite" />
-                        </circle>
-                    `;
-                    
-                    // Add to List
-                    list.innerHTML += `
-                        <div class="glass-panel p-4 rounded-2xl flex justify-between items-center border-r-4 ${c.solved ? 'border-green-500' : 'border-red-600'}">
-                            <div>
-                                <h4 class="text-xs font-bold text-white mb-1">${c.title}</h4>
-                                <span class="text-[8px] bg-white/5 px-2 py-0.5 rounded text-slate-500 uppercase">${c.id}</span>
-                            </div>
-                            <button onclick="solveClash(${idx})" class="text-[9px] font-bold ${c.solved ? 'text-green-500' : 'text-blue-400'} uppercase">
-                                ${c.solved ? 'تم الحل ✅' : 'إغلاق البند'}
-                            </button>
-                        </div>
-                    `;
-                }
-            });
-            
-            document.getElementById('clash-status').innerText = clashes.filter(c => !c.solved).length + " تعارضات نشطة";
+            updateAILogic();
             lucide.createIcons();
         }
 
-        function showClashInfo(idx) {
-            const c = clashes[idx];
-            alert(`[${c.id}] تفاصيل التعارض:\n${c.title}\nالمقترح الذكي: تعديل منسوب المواسير بمقدار -15 سم لتفادي العنصر الإنشائي.`);
+        // --- EDITING ENGINE ---
+        function updateProjectInfo(field, val) {
+            const p = projects.find(x => x.id === activePId);
+            p[field] = val;
+            sync();
         }
 
-        function solveClash(idx) {
-            clashes[idx].solved = !clashes[idx].solved;
-            renderClashes();
+        function updateStageName(sIdx, val) {
+            projects.find(x => x.id === activePId).stages[sIdx].name = val;
+            sync();
         }
 
-        function addNewClash() {
-            const title = prompt("أدخل وصف التعارض الميداني:");
-            if(title) {
-                clashes.push({
-                    id: 'C-' + (100 + clashes.length + 1),
-                    title: title,
-                    severity: 'Medium',
-                    layer: 'mep',
-                    solved: false,
-                    x: Math.random() * 200 + 100,
-                    y: Math.random() * 200 + 100
-                });
-                renderClashes();
+        function updateStageProg(sIdx, val) {
+            projects.find(x => x.id === activePId).stages[sIdx].progress = parseInt(val);
+            document.querySelectorAll('#wbs-container span.text-blue-500')[sIdx].innerText = val + '%';
+            updateAILogic();
+            // Local sync without full re-render for performance
+            localStorage.setItem('taha_supreme_db', JSON.stringify(projects));
+        }
+
+        function updateTaskName(sIdx, tIdx, val) {
+            projects.find(x => x.id === activePId).stages[sIdx].tasks[tIdx] = val;
+            sync();
+        }
+
+        function addTaskToStage(sIdx) {
+            const task = prompt("ادخل وصف المهمة/البند:");
+            if (task) {
+                projects.find(x => x.id === activePId).stages[sIdx].tasks.push(task);
+                sync();
             }
         }
 
-        // Initialize
-        renderClashes();
+        function addWbsStage() {
+            const name = prompt("اسم مرحلة العمل الجديدة:");
+            if (name) {
+                projects.find(x => x.id === activePId).stages.push({ name, progress: 0, tasks: [] });
+                sync();
+            }
+        }
+
+        // --- AI LOGIC CORE ---
+        function updateAILogic() {
+            const p = projects.find(x => x.id === activePId);
+            const msg = document.getElementById('ai-msg');
+            const s1 = p.stages[0]?.progress || 0;
+            const s2 = p.stages[1]?.progress || 0;
+            const s3 = p.stages[2]?.progress || 0;
+
+            if (s3 > 0 && s1 < 100) {
+                msg.innerHTML = `<span class="text-red-500 font-bold">🚨 خطأ هندسي حرج:</span> يتم تنفيذ تشطيبات بينما لم ينتهِ الهيكل الإنشائي. خطر تصدعات مستقبلية وهدر مادي.`;
+            } else if (s1 === 100 && s2 < 50) {
+                msg.innerText = `💡 توصية طه: تم الانتهاء من الهيكل. يجب تكثيف أعمال العزل الآن قبل دخول فصل الشتاء لضمان جودة المباني.`;
+            } else if (s1 > 0 && s1 < 50) {
+                msg.innerText = `⏳ حالة الموقع: أنت الآن في أخطر مراحل المشروع (التأسيس). تأكد من استلام حدادة القواعد بدقة من قبل الاستشاري قبل الصب.`;
+            } else {
+                msg.innerText = `✅ النظام مستقر. نسب الإنجاز تتوافق مع المسار الحرج المخطط له. استمر في التوثيق الدوري.`;
+            }
+        }
+
+        // --- HARDWARE / CAMERA ENGINE ---
+        async function openCamera() {
+            document.getElementById('camera-view').classList.remove('hidden');
+            try {
+                camStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment", focusMode: "continuous" } 
+                });
+                document.getElementById('site-video').srcObject = camStream;
+            } catch (err) {
+                alert("خطأ: يرجى تفعيل إذن الكاميرا في المتصفح.");
+                closeCamera();
+            }
+        }
+
+        function closeCamera() {
+            if (camStream) camStream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-view').classList.add('hidden');
+        }
+
+        function captureFrame() {
+            alert("تم التقاط وتحليل الصورة... جاري ربطها بالتوأم الرقمي للمشروع.");
+            closeCamera();
+        }
+
+        // --- UTILS ---
+        function deleteProject(e, id) {
+            e.stopPropagation();
+            if(confirm('سيتم حذف كافة بيانات هذا المشروع نهائياً. تأكيد؟')) {
+                projects = projects.filter(p => p.id !== id);
+                sync();
+            }
+        }
+
+        function generateReport() {
+            if(!activePId) { alert("اختر مشروعاً أولاً."); return; }
+            const p = projects.find(x => x.id === activePId);
+            const total = Math.round(p.stages.reduce((a, b) => a + b.progress, 0) / p.stages.length);
+            const text = `تقرير الحالة الفنية - م. أحمد طه\nمشروع: ${p.name}\nالموقع: ${p.location}\nنسبة الإنجاز الكلية: ${total}%\n\nالمراحل:\n${p.stages.map(s => `- ${s.name}: ${s.progress}%`).join('\n')}\n\nتم التوليد بواسطة TAHA AI ENGINE.`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        // BOOTSTRAP
+        sync();
         lucide.createIcons();
     </script>
 </body>
