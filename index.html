@@ -3,166 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAHA AI | SUPREME OS - FULL ACTIVATION</title>
+    <title>TAHA OS | المركز السيادي لإدارة المشاريع</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@500;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; background: #020617; color: #f8fafc; margin: 0; }
-        .cyber-panel { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: 2rem; }
-        .progress-glow { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); transition: width 1s ease; }
-        .editable:focus { background: rgba(59, 130, 246, 0.1); outline: 2px dashed #3b82f6; border-radius: 8px; }
-        .scanning { position: absolute; height: 2px; width: 100%; background: #3b82f6; animation: scan 3s infinite; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Orbitron:wght@600;900&display=swap');
+        
+        :root {
+            --primary: #3b82f6;
+            --accent: #00f2ff;
+            --bg: #020617;
+            --glass: rgba(15, 23, 42, 0.9);
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background-color: var(--bg); 
+            color: #f8fafc; 
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .cyber-header { font-family: 'Orbitron', sans-serif; }
+        
+        .glass-card { 
+            background: var(--glass); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-pulse {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #10b981; animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
+        .progress-bar { height: 6px; border-radius: 10px; background: #1e293b; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #00f2ff); box-shadow: 0 0 15px var(--accent); transition: width 1s ease-in-out; }
+
+        .editable:focus { outline: 2px dashed var(--accent); background: rgba(0, 242, 255, 0.05); padding: 4px; border-radius: 4px; }
     </style>
 </head>
 <body class="pb-32">
 
-    <nav class="sticky top-0 z-[100] bg-slate-950/80 backdrop-blur-md p-5 border-b border-white/5 flex justify-between items-center">
+    <nav class="sticky top-0 z-[1000] glass-card m-4 p-4 flex justify-between items-center border-white/10">
         <div class="flex items-center gap-4">
             <div class="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-500/20">
                 <i data-lucide="shield-check" class="text-white w-6 h-6"></i>
             </div>
             <div>
-                <h1 style="font-family:'Orbitron'" class="text-xs font-black tracking-widest text-blue-400 uppercase">Taha Intelligence System</h1>
-                <p class="text-[9px] font-bold text-slate-500">ENGINEERING SOVEREIGNTY v4.0</p>
+                <h1 class="cyber-header text-[10px] tracking-widest text-blue-400 font-black uppercase">Taha Engineering OS</h1>
+                <div class="flex items-center gap-2">
+                    <div class="status-pulse"></div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">System Active: 2026-PRO</span>
+                </div>
             </div>
         </div>
-        <button onclick="createNewProject()" class="p-3 bg-blue-600/10 text-blue-400 rounded-xl border border-blue-500/20">
-            <i data-lucide="plus"></i>
-        </button>
+        <div class="flex gap-2">
+            <button onclick="createNewProject()" class="p-2 bg-blue-600/10 text-blue-400 rounded-xl border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            </button>
+        </div>
     </nav>
 
-    <main id="app-content" class="p-4 space-y-6">
+    <main id="main-view" class="p-4 space-y-6">
         
-        <section id="dashboard" class="space-y-6">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="cyber-panel p-6 border-r-4 border-blue-600">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase">المشروعات النشطة</span>
-                    <h2 id="total-p" class="text-4xl font-black text-white">0</h2>
-                </div>
-                <div class="cyber-panel p-6 border-r-4 border-green-500">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase">كفاءة الإنجاز $E$</span>
-                    <h2 id="avg-p" class="text-4xl font-black text-green-500">0%</h2>
-                </div>
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-6 border-r-4 border-blue-500">
+                <span class="text-[10px] text-slate-500 font-black uppercase">عدد المواقع</span>
+                <h3 id="stat-count" class="text-3xl font-black mt-1">0</h3>
             </div>
-            
-            <div id="project-grid" class="space-y-4">
-                </div>
+            <div class="glass-card p-6 border-r-4 border-green-500">
+                <span class="text-[10px] text-slate-500 font-black uppercase">متوسط الإنجاز</span>
+                <h3 id="stat-avg" class="text-3xl font-black mt-1">0%</h3>
+            </div>
         </section>
 
-        <section id="control-view" class="hidden animate-in slide-in-from-bottom duration-500 space-y-6">
-            <button onclick="showDashboard()" class="text-xs font-bold text-slate-500 flex items-center gap-2"><i data-lucide="arrow-right"></i> الرجوع</button>
-            <div class="cyber-panel p-8">
-                <h2 id="active-p-name" class="text-3xl font-black editable" contenteditable="true">اسم المشروع</h2>
-                <p id="active-p-loc" class="text-blue-500 text-xs font-bold mt-2 uppercase tracking-widest" contenteditable="true">الموقع</p>
+        <div id="project-matrix" class="space-y-4">
             </div>
-
-            <div id="ai-insight" class="cyber-panel p-5 border-l-4 border-yellow-500 flex items-center gap-4">
-                <div class="bg-yellow-500/10 p-3 rounded-full"><i data-lucide="brain" class="text-yellow-500"></i></div>
-                <p id="ai-text" class="text-xs text-slate-300 italic leading-relaxed">تحليل المسار الحرج جاري...</p>
-            </div>
-
-            <div id="wbs-container" class="space-y-4"></div>
-            
-            <button onclick="addStage()" class="w-full p-4 border-2 border-dashed border-slate-800 rounded-3xl text-slate-500 text-xs font-bold">+ إضافة مرحلة (WBS)</button>
-        </section>
 
     </main>
 
-    <nav class="fixed bottom-8 left-8 right-8 cyber-panel p-2 flex justify-around items-center z-[500] border-white/10 shadow-2xl">
-        <button onclick="showDashboard()" class="p-4 text-blue-500"><i data-lucide="layout-grid"></i></button>
-        <button onclick="alert('BIM Model Loading...')" class="p-4 text-slate-500"><i data-lucide="box"></i></button>
-        <button onclick="openCamera()" class="p-4 text-slate-500"><i data-lucide="camera"></i></button>
-        <button onclick="generateWhatsAppReport()" class="p-4 text-slate-500"><i data-lucide="send"></i></button>
-    </nav>
+    <main id="detail-view" class="hidden p-4 space-y-6 animate-in slide-in-from-bottom duration-500">
+        <button onclick="closeDetail()" class="flex items-center gap-2 text-xs font-bold text-slate-500 bg-slate-800 px-4 py-2 rounded-full">
+            <i data-lucide="arrow-right" class="w-4 h-4"></i> العودة للمصفوفة
+        </button>
+
+        <header class="glass-card p-8 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 opacity-5">
+                <i data-lucide="building-2" class="w-40 h-40"></i>
+            </div>
+            <h2 id="det-name" contenteditable="true" onblur="updateField('name', this.innerText)" class="text-4xl font-black focus:editable">اسم المشروع</h2>
+            <div class="flex items-center gap-4 mt-4">
+                <p id="det-loc" contenteditable="true" onblur="updateField('location', this.innerText)" class="text-blue-500 text-xs font-bold uppercase tracking-widest"></p>
+                <span class="h-4 w-[1px] bg-slate-700"></span>
+                <p id="det-budget" contenteditable="true" onblur="updateField('budget', this.innerText)" class="text-green-500 text-xs font-black"></p>
+            </div>
+        </header>
+
+        <div class="glass-card p-6 border-l-4 border-yellow-500 flex gap-4 items-center">
+            <div class="bg-yellow-500/10 p-3 rounded-2xl">
+                <i data-lucide="brain-circuit" class="text-yellow-500"></i>
+            </div>
+            <div>
+                <h4 class="text-[10px] font-black text-yellow-500 uppercase">مساعد إدارة المشاريع (AI)</h4>
+                <p id="ai-advice" class="text-xs text-slate-300 italic mt-1 leading-relaxed">جاري تحليل المخاطر الهندسية...</p>
+            </div>
+        </div>
+
+        <div id="wbs-grid" class="space-y-4"></div>
+
+        <button onclick="addNewStage()" class="w-full p-4 border-2 border-dashed border-slate-800 rounded-[2rem] text-slate-500 text-xs font-black flex items-center justify-center gap-2 hover:border-blue-500 hover:text-blue-400 transition-all">
+            <i data-lucide="layers"></i> إضافة مرحلة عمل (WBS Stage)
+        </button>
+    </main>
+
+    <main id="bim-view" class="hidden p-4 space-y-6">
+        <h2 class="text-3xl font-black">Digital Twin (BIM)</h2>
+        <div class="glass-card p-10 aspect-video flex flex-col items-center justify-center relative border-2 border-blue-500/20">
+            <div class="absolute inset-0 bg-[linear-gradient(rgba(0,242,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,242,255,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+            <i data-lucide="box" class="w-20 h-20 text-blue-500/20 animate-bounce"></i>
+            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mt-4">Analyzing Clashes...</p>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+            <div class="glass-card p-4 flex justify-between items-center">
+                <span class="text-xs font-bold">Clash: MEP vs Structural Beam (B102)</span>
+                <span class="text-red-500 font-black text-[10px]">CRITICAL</span>
+            </div>
+        </div>
+    </main>
+
+    <div id="camera-overlay" class="hidden fixed inset-0 z-[5000] bg-black">
+        <video id="webcam" autoplay playsinline class="w-full h-full object-cover"></video>
+        <div class="absolute inset-0 border-[30px] border-black/40 pointer-events-none flex items-center justify-center">
+            <div class="w-72 h-72 border border-white/20 rounded-full"></div>
+        </div>
+        <div class="absolute bottom-12 left-0 right-0 flex justify-center items-center gap-10">
+            <button onclick="toggleCamera(false)" class="p-5 bg-white/10 text-white rounded-full backdrop-blur-md"><i data-lucide="x"></i></button>
+            <div onclick="alert('Photo Linked to Project')" class="w-20 h-20 bg-white rounded-full border-8 border-slate-900 shadow-2xl active:scale-90 transition-all"></div>
+            <button onclick="alert('AR Grid On')" class="p-5 bg-blue-600 text-white rounded-full"><i data-lucide="scan"></i></button>
+        </div>
+    </div>
+
+    <div class="fixed bottom-6 left-6 right-6 glass-card p-2 flex justify-around items-center z-[2000] shadow-2xl border-white/10">
+        <button onclick="showSection('main-view')" class="p-4 text-blue-500 nav-icon"><i data-lucide="layout-grid"></i></button>
+        <button onclick="showSection('bim-view')" class="p-4 text-slate-500 nav-icon"><i data-lucide="layers"></i></button>
+        <button onclick="toggleCamera(true)" class="p-4 text-slate-500 nav-icon"><i data-lucide="maximize"></i></button>
+        <button onclick="generateTahaReport()" class="p-4 text-slate-500 nav-icon"><i data-lucide="file-text"></i></button>
+    </div>
 
     <script>
-        // 1. Database & Seed Data (The Solution to the Empty Interface)
-        let projects = JSON.parse(localStorage.getItem('taha_v4_db')) || [
+        // ----------------------------------------------------
+        // DB & SEED DATA (Engineering Projects for Taha)
+        // ----------------------------------------------------
+        let db = JSON.parse(localStorage.getItem('taha_supreme_v1')) || [
             {
-                id: 1710000000000,
-                name: "برج الجوهرة السكني",
-                location: "القاهرة الجديدة - التجمع الخامس",
+                id: 1, name: "برج الأيقونة - داون تاون", location: "العاصمة الإدارية", budget: "45M EGP",
                 stages: [
-                    { name: "الهيكل الإنشائي", progress: 85, tasks: ["نجارة القواعد", "حدادة الأعمدة", "صب الأسقف"] },
-                    { name: "أعمال المباني والعزل", progress: 40, tasks: ["توريد الطوب", "بناء الدور الأول"] },
-                    { name: "التشطيبات المعمارية", progress: 10, tasks: ["تأسيس الكهرباء"] }
+                    { name: "أعمال الهيكل والأساسات", progress: 95, tasks: ["صب اللبشة المسلحة", "عزل القواعد", "أعمدة البدروم"] },
+                    { name: "التشطيبات المعمارية", progress: 20, tasks: ["تأسيس الكهرباء", "أعمال المحارة"] },
+                    { name: "نظم الإلكتروميكانيك (MEP)", progress: 5, tasks: ["تأسيس مسارات التكييف"] }
                 ]
             },
             {
-                id: 1710000000001,
-                name: "فيلا العبور (نموذج A)",
-                location: "المنطقة الخامسة",
+                id: 2, name: "فيلا طه كلاسيك", location: "القاهرة الجديدة", budget: "12M EGP",
                 stages: [
-                    { name: "أعمال الحفر والأساسات", progress: 100, tasks: ["الحفر", "الخنزيرة"] },
-                    { name: "المباني", progress: 10, tasks: ["بناء السور"] }
+                    { name: "الهيكل الإنشائي", progress: 100, tasks: ["الانتهاء من صب السقف الأخير"] },
+                    { name: "المباني والعزل", progress: 75, tasks: ["مباني الدور الأرضي", "مباني الدور الأول"] },
+                    { name: "اللاندسكيب", progress: 0, tasks: ["تجهيز التربة", "سور الفيلا"] }
                 ]
             }
         ];
 
-        let activePId = null;
+        let activeId = null;
+        let stream = null;
 
-        // 2. Core Functions
+        // ----------------------------------------------------
+        // SYSTEM CORE
+        // ----------------------------------------------------
         function sync() {
-            localStorage.setItem('taha_v4_db', JSON.stringify(projects));
+            localStorage.setItem('taha_supreme_v1', JSON.stringify(db));
             renderDashboard();
-            if(activePId) renderDetails();
+            if(activeId) renderDetails();
         }
 
         function renderDashboard() {
-            const grid = document.getElementById('project-grid');
-            grid.innerHTML = '';
-            let totalProg = 0;
+            const container = document.getElementById('project-matrix');
+            container.innerHTML = '';
+            let total = 0;
 
-            projects.forEach(p => {
-                const avg = p.stages.length ? Math.round(p.stages.reduce((a,b)=>a+b.progress,0)/p.stages.length) : 0;
-                totalProg += avg;
-                grid.innerHTML += `
-                    <div onclick="openProject(${p.id})" class="cyber-panel p-6 active:scale-95 transition-all border-r-4 border-blue-500">
+            db.forEach(p => {
+                const avg = Math.round(p.stages.reduce((a, b) => a + b.progress, 0) / p.stages.length);
+                total += avg;
+                container.innerHTML += `
+                    <div onclick="openProject(${p.id})" class="glass-card p-6 border-r-4 border-blue-600 active:scale-95 transition-all">
                         <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-xl font-bold">${p.name}</h3>
-                            <button onclick="deleteP(event, ${p.id})" class="text-red-900"><i data-lucide="trash-2" class="w-4"></i></button>
+                            <div>
+                                <h4 class="text-xl font-black">${p.name}</h4>
+                                <p class="text-[9px] text-blue-500 font-bold uppercase mt-1 tracking-widest">${p.location}</p>
+                            </div>
+                            <button onclick="deleteProject(event, ${p.id})" class="text-red-900/40"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                         <div class="flex items-center gap-4">
-                            <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-blue-600 h-full progress-glow" style="width: ${avg}%"></div>
+                            <div class="flex-1 progress-bar">
+                                <div class="progress-fill" style="width: ${avg}%"></div>
                             </div>
-                            <span class="text-xs font-black text-blue-500">${avg}%</span>
+                            <span class="text-xs font-black text-blue-400">${avg}%</span>
                         </div>
                     </div>`;
             });
-
-            document.getElementById('total-p').innerText = projects.length;
-            document.getElementById('avg-p').innerText = projects.length ? Math.round(totalProg/projects.length) + "%" : "0%";
+            document.getElementById('stat-count').innerText = db.length;
+            document.getElementById('stat-avg').innerText = db.length ? Math.round(total / db.length) + "%" : "0%";
             lucide.createIcons();
         }
 
         function openProject(id) {
-            activePId = id;
-            document.getElementById('dashboard').classList.add('hidden');
-            document.getElementById('control-view').classList.remove('hidden');
+            activeId = id;
+            showSection('detail-view');
             renderDetails();
         }
 
         function renderDetails() {
-            const p = projects.find(x => x.id === activePId);
-            document.getElementById('active-p-name').innerText = p.name;
-            document.getElementById('active-p-loc').innerText = p.location;
-            
-            const container = document.getElementById('wbs-container');
-            container.innerHTML = '';
+            const p = db.find(x => x.id === activeId);
+            document.getElementById('det-name').innerText = p.name;
+            document.getElementById('det-loc').innerText = p.location;
+            document.getElementById('det-budget').innerText = "الميزانية: " + p.budget;
+
+            const grid = document.getElementById('wbs-grid');
+            grid.innerHTML = '';
             p.stages.forEach((s, sIdx) => {
-                container.innerHTML += `
-                    <div class="cyber-panel p-6">
-                        <div class="flex justify-between mb-4">
-                            <span class="text-sm font-bold text-slate-300" contenteditable="true" onblur="editStageName(${sIdx}, this.innerText)">${s.name}</span>
+                grid.innerHTML += `
+                    <div class="glass-card p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-sm font-black uppercase text-slate-400" contenteditable="true" onblur="updateStageName(${sIdx}, this.innerText)">${s.name}</span>
                             <span class="text-blue-500 font-black">${s.progress}%</span>
                         </div>
-                        <input type="range" value="${s.progress}" oninput="updateProg(${sIdx}, this.value)" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-4">
+                        <input type="range" value="${s.progress}" oninput="updateStageProg(${sIdx}, this.value)" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-6">
                         <div class="flex flex-wrap gap-2">
-                            ${s.tasks.map((t, tIdx) => `<span class="text-[9px] bg-slate-900 px-3 py-1 rounded-lg border border-white/5" contenteditable="true" onblur="editTask(${sIdx}, ${tIdx}, this.innerText)">${t}</span>`).join('')}
-                            <button onclick="addTask(${sIdx})" class="text-[9px] text-blue-500 font-bold">+ إضافة بند</button>
+                            ${s.tasks.map((t, tIdx) => `<span class="text-[9px] bg-slate-900 border border-white/5 px-3 py-1.5 rounded-lg text-slate-400" contenteditable="true" onblur="updateTaskName(${sIdx}, ${tIdx}, this.innerText)">${t}</span>`).join('')}
+                            <button onclick="addTask(${sIdx})" class="text-[9px] bg-blue-600/10 text-blue-500 border border-blue-500/20 px-3 py-1.5 rounded-lg font-bold">+ بند فرعي</button>
                         </div>
                     </div>`;
             });
@@ -170,54 +252,109 @@
             lucide.createIcons();
         }
 
-        function updateProg(sIdx, val) {
-            const p = projects.find(x => x.id === activePId);
-            p.stages[sIdx].progress = parseInt(val);
-            document.querySelectorAll('#wbs-container .text-blue-500')[sIdx].innerText = val + '%';
-            updateAI(p);
-            localStorage.setItem('taha_v4_db', JSON.stringify(projects));
-        }
-
+        // ----------------------------------------------------
+        // AI & ENGINEERING LOGIC
+        // ----------------------------------------------------
         function updateAI(p) {
-            const aiText = document.getElementById('ai-text');
-            const total = Math.round(p.stages.reduce((a,b)=>a+b.progress,0)/p.stages.length);
-            if(total < 30) aiText.innerText = "تحذير هندسي: التركيز الآن يجب أن يكون على جودة صب الخرسانات لضمان عدم حدوث شروخ إجهاد.";
-            else if(total < 80) aiText.innerText = "نصيحة طه: ابدأ بتنسيق مسارات التكييف مع أعمال الجبس بورد فوراً لتجنب التكسير.";
-            else aiText.innerText = "مرحلة التسليم: قم بإعداد Punch List لجميع الملاحظات المعمارية النهائية.";
+            const advice = document.getElementById('ai-advice');
+            const total = Math.round(p.stages.reduce((a, b) => a + b.progress, 0) / p.stages.length);
+            
+            // Critical Path Simulation
+            if (p.stages[0].progress < 100 && p.stages[1].progress > 10) {
+                advice.innerHTML = `<span class="text-red-500 font-black">🚨 تحذير:</span> خطأ في تسلسل المسار الحرج. يُنصح بإيقاف المباني حتى استلام تقرير جودة خرسانة السقف الأخير.`;
+            } else if (total > 80) {
+                advice.innerText = `✅ توصية م. طه: المشروع في مرحلة التسليم. قم بمراجعة لوحات (As-Built) ومطابقتها مع الواقع فوراً.`;
+            } else {
+                advice.innerText = `ℹ️ ملاحظة: معدل العمل مستقر. تأكد من مراجعة التدفق النقدي للمرحلة القادمة لتجنب توقف التوريدات.`;
+            }
         }
 
-        function showDashboard() {
-            document.getElementById('dashboard').classList.remove('hidden');
-            document.getElementById('control-center')?.classList.add('hidden'); // Fix for some browsers
-            document.getElementById('control-view').classList.add('hidden');
-            renderDashboard();
+        // ----------------------------------------------------
+        // EDITING COMMANDS
+        // ----------------------------------------------------
+        function updateField(field, val) {
+            const p = db.find(x => x.id === activeId);
+            p[field] = val;
+            sync();
+        }
+
+        function updateStageName(sIdx, val) {
+            db.find(x => x.id === activeId).stages[sIdx].name = val;
+            sync();
+        }
+
+        function updateStageProg(sIdx, val) {
+            const p = db.find(x => x.id === activeId);
+            p.stages[sIdx].progress = parseInt(val);
+            document.querySelectorAll('#wbs-grid span.text-blue-500')[sIdx].innerText = val + '%';
+            updateAI(p);
+            localStorage.setItem('taha_supreme_v1', JSON.stringify(db));
+        }
+
+        function updateTaskName(sIdx, tIdx, val) {
+            db.find(x => x.id === activeId).stages[sIdx].tasks[tIdx] = val;
+            sync();
+        }
+
+        function addTask(sIdx) {
+            const task = prompt("ادخل وصف المهمة:");
+            if(task) { db.find(x => x.id === activeId).stages[sIdx].tasks.push(task); sync(); }
+        }
+
+        function addNewStage() {
+            const name = prompt("اسم المرحلة الهندسية الجديدة:");
+            if(name) { db.find(x => x.id === activeId).stages.push({ name, progress: 0, tasks: [] }); sync(); }
         }
 
         function createNewProject() {
-            const n = prompt("اسم المشروع الجديد:");
-            if(n) {
-                projects.push({ id: Date.now(), name: n, location: "قيد التحديد", stages: [{name: "المرحلة الأولى", progress: 0, tasks: ["بداية العمل"]}] });
+            const name = prompt("اسم المشروع الهندسي:");
+            if(name) {
+                db.push({
+                    id: Date.now(), name, location: "موقع جديد", budget: "0 EGP",
+                    stages: [{ name: "مرحلة التأسيس", progress: 0, tasks: ["تجهيز الموقع"] }]
+                });
                 sync();
             }
         }
 
-        function deleteP(e, id) {
-            e.stopPropagation();
-            if(confirm('حذف نهائي؟')) { projects = projects.filter(x => x.id !== id); sync(); }
+        // ----------------------------------------------------
+        // UI CONTROL
+        // ----------------------------------------------------
+        function showSection(id) {
+            ['main-view', 'detail-view', 'bim-view'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
         }
 
-        // Initialize on load
-        window.onload = () => {
-            renderDashboard();
-            lucide.createIcons();
-        };
+        function closeDetail() { showSection('main-view'); activeId = null; }
 
-        function generateWhatsAppReport() {
-            if(!activePId) return alert("اختر مشروعاً أولاً");
-            const p = projects.find(x => x.id === activePId);
-            const text = `تقرير الموقع - م. أحمد طه\nمشروع: ${p.name}\nنسبة الإنجاز: ${Math.round(p.stages.reduce((a,b)=>a+b.progress,0)/p.stages.length)}%`;
+        async function toggleCamera(show) {
+            const cam = document.getElementById('camera-overlay');
+            if(show) {
+                cam.classList.remove('hidden');
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                document.getElementById('webcam').srcObject = stream;
+            } else {
+                cam.classList.add('hidden');
+                if(stream) stream.getTracks().forEach(t => t.stop());
+            }
+        }
+
+        function generateTahaReport() {
+            if(!activeId) return alert("يرجى اختيار مشروع");
+            const p = db.find(x => x.id === activeId);
+            const avg = Math.round(p.stages.reduce((a, b) => a + b.progress, 0) / p.stages.length);
+            const text = `تقرير الحالة الفنية المتقدمة\nمشروع: ${p.name}\nالموقع: ${p.location}\nنسبة الإنجاز: ${avg}%\n\nتحياتي، م. أحمد طه`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
         }
+
+        function deleteProject(e, id) {
+            e.stopPropagation();
+            if(confirm('تأكيد حذف المشروع؟')) { db = db.filter(x => x.id !== id); sync(); }
+        }
+
+        // INITIALIZE
+        sync();
+        lucide.createIcons();
     </script>
 </body>
 </html>
